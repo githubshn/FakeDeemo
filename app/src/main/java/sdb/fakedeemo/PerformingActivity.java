@@ -30,6 +30,7 @@ public class PerformingActivity extends AppCompatActivity {
     private String[] reader=new String[1000];
     private int lenreader,keynum;
     private MediaPlayer mediaplayer;
+    private Boolean SoundOver=false;
     private ImageView ImBack;
     private TextView TextPosition,TextMouse,TextScore;
     private Timer timer;
@@ -49,6 +50,7 @@ public class PerformingActivity extends AppCompatActivity {
         view.ScreenH=ScreenH;
         view.ScreenW=ScreenW;
         view.preparetime=preparetime;
+        view.duration=mediaplayer.getDuration();
         view.setX(0);
         view.setY(0);
         //通知view组件重绘
@@ -99,8 +101,7 @@ public class PerformingActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 if(msg.what!=-1) {
                     TextPosition.setText(String.valueOf(msg.what));
-                    //RefreshSoundTrack();
-                    //System.out.println(nowKeyID);
+                    //RefreshSoundTrack
                     while(nowKeyID<=keynum&&(key[nowKeyID].type!="Key"||key[nowKeyID].place*1000+sparetime1-preparetime<msg.what)){
                         if(key[nowKeyID].type!="Key"){
                             nowKeyID++;
@@ -116,7 +117,6 @@ public class PerformingActivity extends AppCompatActivity {
                     }
 
                     //DrawSoundTrack();
-
                     view.total=0;
                     view.cp=msg.what;
                     for(int i=1;i<=35;i++){
@@ -141,7 +141,6 @@ public class PerformingActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    //System.out.println(view.total);
                     view.invalidate();
                 }else {
                     TextPosition.setText("Over");
@@ -159,6 +158,7 @@ public class PerformingActivity extends AppCompatActivity {
                     message.what = mediaplayer.getCurrentPosition();
                 }else{
                     message.what = -1;
+                    SoundOver=true;
                     mediaplayer.release();
                 }
                 handler.sendMessage(message);
@@ -390,6 +390,7 @@ public class PerformingActivity extends AppCompatActivity {
         //歌曲准备结束
         testnum=0;
 
+        SoundOver=false;
         mediaplayer.start();
         nowKeyID=1;
         nowKeyTime=0;
@@ -402,50 +403,52 @@ public class PerformingActivity extends AppCompatActivity {
         //Timer
     }
     public boolean onTouchEvent(android.view.MotionEvent event) {
-        delKey delkey=new delKey();
-        float x1,x2,y1,y2,x3,y3;
-        int STonClick;
-        int pointnum=event.getPointerCount();
-        //System.out.println(pointnum);
-        switch(event.getAction()){
-            case MotionEvent.ACTION_DOWN:{
-                x1 = event.getX();
-                y1 = event.getY();
-                STonClick=CalculateMouse(x1,y1);
-                //TextScore.setText("Down");
+        if(!SoundOver) {
+            delKey delkey = new delKey();
+            float x1, x2, y1, y2, x3, y3;
+            int STonClick;
+            int pointnum = event.getPointerCount();
+            //System.out.println(pointnum);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    x1 = event.getX();
+                    y1 = event.getY();
+                    STonClick = CalculateMouse(x1, y1);
+                    //TextScore.setText("Down");
 
 
-                if(STonClick>=0&&STonClick<=35){
-                    delkey=soundtrack[STonClick].judge(mediaplayer.getCurrentPosition(),preparetime,sparetime1,'B');
-                    if(delkey.score>0){
-                        System.out.println("id");
-                        System.out.println(delkey.id);
-                        System.out.println(String.valueOf(STonClick));
-                        testnum++;
-                        for(int i=delkey.start;i<=delkey.end;i++){
-                            soundtrack[i].del(delkey.id);
-                            TextScore.setText(String.valueOf(testnum));
+                    if (STonClick >= 0 && STonClick <= 35) {
+                        delkey = soundtrack[STonClick].judge(mediaplayer.getCurrentPosition(), preparetime, sparetime1, 'B');
+                        if (delkey.score > 0) {
+                            //System.out.println("id");
+                            //System.out.println(delkey.id);
+                            //System.out.println(String.valueOf(STonClick));
+                            testnum++;
+                            for (int i = delkey.start; i <= delkey.end; i++) {
+                                soundtrack[i].del(delkey.id);
+                                TextScore.setText(String.valueOf(testnum));
+                            }
                         }
                     }
-                }
 
-                break;
-            }
-            case MotionEvent.ACTION_MOVE:{
-                x2 = event.getX();
-                y2 = event.getY();
-                STonClick=CalculateMouse(x2,y2);
-                //TextScore.setText("Move");
-                //if(STonClick>=0&&STonClick<=35)soundtrack[STonClick].judge(mediaplayer.getCurrentPosition());
-                break;
-            }
-            case MotionEvent.ACTION_UP:{
-                x3 = event.getX();
-                y3 = event.getY();
-                STonClick=CalculateMouse(x3,y3);
-                //TextScore.setText("UP");
-                //if(STonClick>=0&&STonClick<=35)soundtrack[STonClick].judge(mediaplayer.getCurrentPosition());
-                break;
+                    break;
+                }
+                case MotionEvent.ACTION_MOVE: {
+                    x2 = event.getX();
+                    y2 = event.getY();
+                    STonClick = CalculateMouse(x2, y2);
+                    //TextScore.setText("Move");
+                    //if(STonClick>=0&&STonClick<=35)soundtrack[STonClick].judge(mediaplayer.getCurrentPosition());
+                    break;
+                }
+                case MotionEvent.ACTION_UP: {
+                    x3 = event.getX();
+                    y3 = event.getY();
+                    STonClick = CalculateMouse(x3, y3);
+                    //TextScore.setText("UP");
+                    //if(STonClick>=0&&STonClick<=35)soundtrack[STonClick].judge(mediaplayer.getCurrentPosition());
+                    break;
+                }
             }
         }
         return true;

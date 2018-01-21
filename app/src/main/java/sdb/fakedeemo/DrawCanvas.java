@@ -22,6 +22,7 @@ public class DrawCanvas extends View{
     //start end place type
     public int cp;//currentpossition
     public int preparetime;
+    public int duration;
 
     public DrawCanvas(Context context){
         super(context);
@@ -43,6 +44,7 @@ public class DrawCanvas extends View{
         int ex=BSTW*s;
         int x=Math.round(sx+(ex-sx)*a-width/2);
         int w=Math.round(width*(e-s+1));
+
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(x, height-keywidth, x+w, height+keywidth, paint);// 绘制琴键
@@ -58,22 +60,32 @@ public class DrawCanvas extends View{
         final int BSTW=ScreenW/36;//BottomSoundTrackWidth   左右留1/2
 
         Paint paint=new Paint();
+
+        //绘制分界线
         paint.setColor(Color.GRAY);// 设置灰色
         paint.setStyle(Paint.Style.FILL);//设置填满
-        //System.out.println("ScreenH");
-        //System.out.println(ScreenH);
         canvas.drawRect(0, starth, ScreenW, starth+linew, paint);// 上分割线
         canvas.drawRect(0, endh, ScreenW, endh+linew, paint);// 下分割线
-        //canvas.drawRect(0,0,300,300,paint);
+        //分界线绘制完成
+
+        //绘制进度条
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(0,starth+linew,ScreenW*cp/duration,starth+2*linew,paint);
+        //进度条完成
 
         //下面是辅助绘制的音轨
         for(int i=1;i<=35;i++){
+            paint.setColor(Color.GRAY);
+            paint.setStyle(Paint.Style.FILL);
             canvas.drawLine(ScreenW/8+USTW*i,starth,BSTW*i,endh,paint);
         }
         //音轨绘制完成
+
+        //绘制琴键
         for(int i=1;i<=total;i++){
             drawkey(canvas,paint,keys[i],keye[i],keyp[i],keyt[i]);
         }
-
+        //琴键绘制完成
     }
 }
