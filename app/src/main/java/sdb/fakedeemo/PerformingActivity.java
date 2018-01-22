@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Message;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class PerformingActivity extends AppCompatActivity {
+
     ConstraintLayout rl;
     private int ScreenH,ScreenW;
     private Key[] key=new Key[5000];
@@ -37,12 +39,21 @@ public class PerformingActivity extends AppCompatActivity {
     private TimerTask timerTask;
     final int refresh=40;//大约24分之一秒
     private SoundTrack[] soundtrack=new SoundTrack[37];
-    private int nowKey,nowKeyID;
+    private int nowKeyID;
     private float nowKeyTime;
     private int ContinueSound[]={1,1,2,2,4,4,4,4,8,8,8,8,8,8,8,8,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,32};
     private DrawCanvas view;
 
+    private GameScore score=new GameScore();
+    public float simglekeyscore;
+
     private int testnum=0;
+
+    float ComboScore(int combo){
+        if(combo<0) return 0;
+        float re=(float)combo;
+        return re*re;
+    }
 
     private void init() {
         view=new DrawCanvas(this);
@@ -119,6 +130,7 @@ public class PerformingActivity extends AppCompatActivity {
                     //DrawSoundTrack();
                     view.total=0;
                     view.cp=msg.what;
+                    view.completeness=score.score/score.totScore;
                     for(int i=1;i<=35;i++){
                         //draw soundtrack[i];
                         int t=soundtrack[i].gett();
@@ -131,6 +143,8 @@ public class PerformingActivity extends AppCompatActivity {
                                     for(int ii=soundtrack[i].queueKey[j].start;ii<=soundtrack[i].queueKey[j].end;ii++) {
                                         soundtrack[i].del(soundtrack[i].queue[j]);
                                     }
+                                    score.Combo=0;
+                                    //琴键自然死亡，Combo重置
                                 }else {
                                     view.total++;
                                     view.keys[view.total] = soundtrack[i].queueKey[j].start;
@@ -199,16 +213,28 @@ public class PerformingActivity extends AppCompatActivity {
 
         TextScore=new TextView(this);
         rl.addView(TextScore);
-        TextScore.setX(500);
-        TextScore.setY(800);
+        TextScore.setX(ScreenW*9/10);
+        TextScore.setY(0);
         TextScore.setHeight(100);
         TextScore.setWidth(300);
-        TextScore.setText("Condition");
+        TextScore.setTextSize(30);
+        TextScore.setTextColor(Color.GRAY);
+        TextScore.setText("0.00%");
 
 
         Bundle bundle=this.getIntent().getExtras();
         String SoundName=bundle.getString("NAME");
         //获取歌曲名
+
+        //积分板块init
+        score.score=0;
+        score.totKey=0;
+        for(int i=0;i<=5;i++){
+            score.Judge[i]=0;
+        }
+        score.Combo=0;
+        score.totScore=0;
+        //积分板块init
 
         String filename="key"+SoundName+".txt";
         filename="142.txt";
@@ -340,6 +366,9 @@ public class PerformingActivity extends AppCompatActivity {
                             key[keynum].time=atime;
                             key[keynum].speed=speed;
                             key[keynum].place=aatime;
+
+                            score.totKey++;//统计出现的键的个数
+
                             //System.out.println(key[keynum].place);
                             //System.out.println(key[keynum].type);
                         }else if(aa.length()==2){
@@ -352,6 +381,9 @@ public class PerformingActivity extends AppCompatActivity {
                             key[keynum].time=atime;
                             key[keynum].speed=speed;
                             key[keynum].place=aatime;
+
+                            score.totKey++;//统计出现的键的个数
+
                             //System.out.println(key[keynum].place);
                             //System.out.println(key[keynum].type);
                         }
@@ -365,9 +397,14 @@ public class PerformingActivity extends AppCompatActivity {
                 }
             }
         }
-
-
         //将文件解析完成
+
+        simglekeyscore=ComboScore(score.totKey)/3*7/score.totKey;
+        score.totScore=score.totKey*simglekeyscore+ComboScore(score.totKey);//计算总分（未归一化）
+        //System.out.println("Score");
+        //System.out.println(simglekeyscore);
+        //System.out.println(score.totScore);
+        //System.out.println("Score");
 
         mediaplayer=new MediaPlayer();
         mediaplayer.reset();
@@ -385,7 +422,7 @@ public class PerformingActivity extends AppCompatActivity {
         }
 
         //if(mediaplayer==null)System.out.println("null");else System.out.println("start");
-        System.out.println(mediaplayer.getDuration());
+        //System.out.println(mediaplayer.getDuration());
 
         //歌曲准备结束
         testnum=0;
@@ -426,8 +463,17 @@ public class PerformingActivity extends AppCompatActivity {
                             testnum++;
                             for (int i = delkey.start; i <= delkey.end; i++) {
                                 soundtrack[i].del(delkey.id);
-                                TextScore.setText(String.valueOf(testnum));
                             }
+                            score.Combo++;
+                            score.Judge[delkey.score]++;
+                            score.score=score.score+simglekeyscore+ComboScore(score.Combo)-ComboScore(score.Combo-1);//计算分数
+                            int as=(int)(score.score/score.totScore*10000);
+                            float ass=as/100;
+                            TextScore.setText(String.valueOf(ass)+"%");
+                            //System.out.println("Combo");
+                            //System.out.println(score.Combo);
+                            //System.out.println(score.score);
+                            //System.out.println("Combo");
                         }
                     }
 

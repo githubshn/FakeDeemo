@@ -36,10 +36,10 @@ public class SoundTrack {
             t++;
         }
         if(t>w)return re;
-        System.out.println('t');
-        System.out.println(String.valueOf(t));
+        //System.out.println('t');
+        //System.out.println(String.valueOf(t));
         float a=((queueKey[t].place*1000+sparetime)-cp)/preparetime*100;
-        System.out.println(a);
+        //System.out.println(a);
         switch (type){
             case 'B':
                 if(-10<=a&&a<=10){

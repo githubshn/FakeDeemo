@@ -23,6 +23,7 @@ public class DrawCanvas extends View{
     public int cp;//currentpossition
     public int preparetime;
     public int duration;
+    public float completeness;
 
     public DrawCanvas(Context context){
         super(context);
@@ -73,6 +74,13 @@ public class DrawCanvas extends View{
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(0,starth+linew,ScreenW*cp/duration,starth+2*linew,paint);
         //进度条完成
+
+        /*
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawText(String.valueOf(completeness),ScreenW*9/10,0,paint);
+        //绘制完成度
+        */
 
         //下面是辅助绘制的音轨
         for(int i=1;i<=35;i++){
