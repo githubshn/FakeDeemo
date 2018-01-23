@@ -53,8 +53,8 @@ public class StatisticsActivity extends AppCompatActivity {
         Im.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 Intent intent=new Intent(StatisticsActivity.this,MainActivity.class);
-                //startActivity(intent);
-                //StatisticsActivity.this.finish();
+                startActivity(intent);
+                StatisticsActivity.this.finish();
             }
         });
     }
