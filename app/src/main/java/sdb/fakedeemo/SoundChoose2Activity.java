@@ -48,6 +48,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent=new Intent(SoundChoose2Activity.this,SoundChooseActivity.class);
                 startActivity(intent);
+                SoundChoose2Activity.this.finish();
             }
         });
         //Back 按钮
@@ -106,6 +107,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
                 Intent intent=new Intent(SoundChoose2Activity.this,PerformingActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                //SoundChoose2Activity.this.finish();
             }
         });
     }

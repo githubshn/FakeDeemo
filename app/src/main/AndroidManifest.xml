@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".SoundChooseActivity" />
         <activity android:name=".SoundChoose2Activity" />
-        <activity android:name=".PerformingActivity"></activity>
+        <activity android:name=".PerformingActivity" />
+        <activity android:name=".StatisticsActivity"></activity>
     </application>
 
 </manifest>

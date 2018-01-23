@@ -23,6 +23,7 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class PerformingActivity extends AppCompatActivity {
 
     ConstraintLayout rl;
@@ -33,7 +34,7 @@ public class PerformingActivity extends AppCompatActivity {
     private int lenreader,keynum;
     private MediaPlayer mediaplayer;
     private Boolean SoundOver=false;
-    private ImageView ImBack;
+    private ImageView ImStop;
     private TextView TextPosition,TextMouse,TextScore;
     private Timer timer;
     private TimerTask timerTask;
@@ -48,6 +49,22 @@ public class PerformingActivity extends AppCompatActivity {
     public float simglekeyscore;
 
     private int testnum=0;
+
+    void Close(){
+        /*
+        if(mediaplayer!=null||mediaplayer.isPlaying()){
+            mediaplayer.release();
+            mediaplayer.reset();
+        }
+        */
+        SoundOver=true;
+        //Bundle bundle=this.getIntent().getExtras();
+        //String SGName=bundle.getString("NAME");
+        //bundle.putString("NAME",SGName);
+        Intent intent = new Intent(PerformingActivity.this, StatisticsActivity.class);
+        startActivity(intent);
+        PerformingActivity.this.finish();
+    }
 
     float ComboScore(int combo){
         if(combo<0) return 0;
@@ -91,6 +108,7 @@ public class PerformingActivity extends AppCompatActivity {
         if(x>10)x-=7;
         return x;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,18 +197,17 @@ public class PerformingActivity extends AppCompatActivity {
             }
         };
 
-        ImBack=new ImageView(this);
-        rl.addView(ImBack);
-        ImBack.setX(0);
-        ImBack.setY(0);
-        ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ScreenW/6,ScreenW/18);
-        ImBack.setLayoutParams(lp);
-        ImBack.setScaleType(ImageView.ScaleType.FIT_XY);
-        ImBack.setImageResource(R.drawable.back);
-        ImBack.setOnClickListener(new View.OnClickListener() {
+        ImStop=new ImageView(this);
+        rl.addView(ImStop);
+        ImStop.setX(ScreenW/18);
+        ImStop.setY(ScreenW/9);
+        ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ScreenW/18,ScreenW/18);
+        ImStop.setLayoutParams(lp);
+        ImStop.setScaleType(ImageView.ScaleType.FIT_XY);
+        ImStop.setImageResource(R.drawable.back2);
+        ImStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                Intent intent=new Intent(PerformingActivity.this,SoundChoose2Activity.class);
-                startActivity(intent);
+                Close();
             }
         });
         //Back 按钮
@@ -220,6 +237,7 @@ public class PerformingActivity extends AppCompatActivity {
         TextScore.setTextSize(30);
         TextScore.setTextColor(Color.GRAY);
         TextScore.setText("0.00%");
+
 
 
         Bundle bundle=this.getIntent().getExtras();
@@ -399,6 +417,7 @@ public class PerformingActivity extends AppCompatActivity {
         }
         //将文件解析完成
 
+
         simglekeyscore=ComboScore(score.totKey)/3*7/score.totKey;
         score.totScore=score.totKey*simglekeyscore+ComboScore(score.totKey);//计算总分（未归一化）
         //System.out.println("Score");
@@ -427,6 +446,7 @@ public class PerformingActivity extends AppCompatActivity {
         //歌曲准备结束
         testnum=0;
 
+
         SoundOver=false;
         mediaplayer.start();
         nowKeyID=1;
@@ -438,7 +458,10 @@ public class PerformingActivity extends AppCompatActivity {
         timer=new Timer();
         timer.schedule(timerTask,0,refresh);
         //Timer
+
     }
+
+
     public boolean onTouchEvent(android.view.MotionEvent event) {
         if(!SoundOver) {
             delKey delkey = new delKey();
@@ -499,4 +522,5 @@ public class PerformingActivity extends AppCompatActivity {
         }
         return true;
     };
+
 }
