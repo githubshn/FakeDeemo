@@ -51,12 +51,10 @@ public class PerformingActivity extends AppCompatActivity {
     private int testnum=0;
 
     void Close(){
-        /*
-        if(mediaplayer!=null||mediaplayer.isPlaying()){
-            mediaplayer.release();
-            mediaplayer.reset();
-        }
-        */
+        //if(mediaplayer!=null||mediaplayer.isPlaying()){
+        //    mediaplayer.release();
+        //    mediaplayer.reset();
+        //}
         SoundOver=true;
         //Bundle bundle=this.getIntent().getExtras();
         //String SGName=bundle.getString("NAME");
@@ -254,8 +252,8 @@ public class PerformingActivity extends AppCompatActivity {
         score.totScore=0;
         //积分板块init
 
-        String filename="key"+SoundName+".txt";
-        filename="142.txt";
+        String filename="sound"+SoundName+"hard.txt";
+        //filename="142.txt";
         //System.out.println(filename);
         Scanner filescanner=null;
         InputStream inputstream=null;
@@ -429,7 +427,7 @@ public class PerformingActivity extends AppCompatActivity {
         mediaplayer.reset();
         String musicname;
         musicname="music"+SoundName+".mp3";
-        musicname="test.mp3";
+        //musicname="test.mp3";
 
         try {
             AssetFileDescriptor fileDescriptor = getAssets().openFd(musicname);
@@ -458,6 +456,9 @@ public class PerformingActivity extends AppCompatActivity {
         timer=new Timer();
         timer.schedule(timerTask,0,refresh);
         //Timer
+        //if(!mediaplayer.isPlaying()){
+        //    Close();
+        //}
 
     }
 
@@ -474,10 +475,11 @@ public class PerformingActivity extends AppCompatActivity {
                     x1 = event.getX();
                     y1 = event.getY();
                     STonClick = CalculateMouse(x1, y1);
+                    if(y1<=ScreenH/2)STonClick=0;
                     //TextScore.setText("Down");
 
 
-                    if (STonClick >= 0 && STonClick <= 35) {
+                    if (STonClick >= 1 && STonClick <= 35) {
                         delkey = soundtrack[STonClick].judge(mediaplayer.getCurrentPosition(), preparetime, sparetime1, 'B');
                         if (delkey.score > 0) {
                             //System.out.println("id");

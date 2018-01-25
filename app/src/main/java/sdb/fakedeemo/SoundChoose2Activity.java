@@ -58,8 +58,6 @@ public class SoundChoose2Activity extends AppCompatActivity {
         //获取曲包名
 
         String filename="sg"+SGName+"catalogue.txt";
-        //filename="test.txt";
-        //System.out.println(filename);
         Scanner filescanner=null;
         InputStream inputstream=null;
         AssetManager assetmanager=getAssets();
@@ -107,7 +105,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
                 Intent intent=new Intent(SoundChoose2Activity.this,PerformingActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
-                //SoundChoose2Activity.this.finish();
+                SoundChoose2Activity.this.finish();
             }
         });
     }
