@@ -5,16 +5,21 @@ package sdb.fakedeemo;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.graphics.Picture;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -28,6 +33,10 @@ public class SoundChooseActivity extends AppCompatActivity {
     private ImageView ImBack,ImBottomNotice,ImLeft,ImRight,ImMid;
     private SGCondition[] sgc=new SGCondition[100];
     private int ImMidID;
+    private boolean soundchoose=false;//允许鼠标动作判定
+    private int sgnum=0;
+    private float x1=0, x2=0, y1=0, y2=0, x3=0, y3=0;
+    private TextView TextCondition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +114,15 @@ public class SoundChooseActivity extends AppCompatActivity {
         ImRight.setVisibility(View.INVISIBLE);
 
 
-        //System.out.println("!!!!!");
+        TextCondition=new TextView(this);
+        rl.addView(TextCondition);
+        TextCondition.setX(0);
+        TextCondition.setY(ScreenH/8);
+        TextCondition.setHeight(100);
+        TextCondition.setWidth(ScreenW);
+        TextCondition.setTextSize(30);
+        TextCondition.setGravity(Gravity.CENTER);
+        TextCondition.setVisibility(View.INVISIBLE);
 
 
         ImBottomNotice.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +134,7 @@ public class SoundChooseActivity extends AppCompatActivity {
                 try{
                     inputstream=assetmanager.open(sgfile);
                     filescanner=new Scanner (inputstream);
-                    int sgnum=new Scanner(filescanner.nextLine()).nextInt();
+                    sgnum=new Scanner(filescanner.nextLine()).nextInt();
                     int i;
                     for(i=0;i<=sgnum+1;i++) {
                         sgc[i] = new SGCondition();
@@ -140,19 +157,108 @@ public class SoundChooseActivity extends AppCompatActivity {
                 ImLeft.setVisibility(View.VISIBLE);
                 ImMid.setVisibility(View.VISIBLE);
                 ImRight.setVisibility(View.VISIBLE);
+                soundchoose=true;
+                String atext;
+                atext=sgc[ImMidID].name;
+                if(sgc[ImMidID].isavailable){
+                    atext=atext;
+                    TextCondition.setTextColor(Color.BLACK);
+                }else{
+                    atext=atext+"  LOCKED!";
+                    TextCondition.setTextColor(Color.RED);
+                }
+                TextCondition.setText(atext);
+                TextCondition.setVisibility(View.VISIBLE);
             }
         });
         ImMidID=1;
 
+/*
         ImMid.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putString("NAME",sgc[ImMidID].name);
-                Intent intent=new Intent(SoundChooseActivity.this,SoundChoose2Activity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                SoundChooseActivity.this.finish();
+                if(sgc[ImMidID].isavailable) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("NAME", sgc[ImMidID].name);
+                    Intent intent = new Intent(SoundChooseActivity.this, SoundChoose2Activity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    SoundChooseActivity.this.finish();
+                }else{
+                    System.out.println("LOCKED");
+                }
             }
         });
+        */
+
     }
+
+    public boolean onTouchEvent(android.view.MotionEvent event) {
+        delKey delkey = new delKey();
+        if (soundchoose) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    x1 = event.getX();
+                    y1 = event.getY();
+                    System.out.println("x1");
+                    System.out.println(x1);
+                    break;
+                }
+                case MotionEvent.ACTION_MOVE: {
+                    x2 = event.getX();
+                    y2 = event.getY();
+                    break;
+                }
+                case MotionEvent.ACTION_UP: {
+                    x3 = event.getX();
+                    y3 = event.getY();
+                    System.out.println("x3");
+                    System.out.println(x3);
+                    System.out.println("*x1");
+                    System.out.println(x1);
+                    if(y1>=ScreenH/5&&y1<=ScreenH/5+ScreenH*2/3){
+                        if(x3-x1<0&&Math.abs(x3-x1)>=100){
+                            if(ImMidID<sgnum){
+                                ImMidID++;
+                            }
+                        }else if(x3-x1>0&&Math.abs(x3-x1)>=100){
+                            //System.out.println("left");
+                            if(ImMidID>1){
+                                ImMidID--;
+                            }
+                        }else if((x1>=ScreenW/2-ScreenH/3&&x1<=ScreenW/2+ScreenH/3)&&(Math.abs(x3-x1)<=100)&&(Math.abs(y1-y3)<=100)){
+                            if(sgc[ImMidID].isavailable) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("NAME", sgc[ImMidID].name);
+                                Intent intent = new Intent(SoundChooseActivity.this, SoundChoose2Activity.class);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                                SoundChooseActivity.this.finish();
+                            }else{
+                                Toast.makeText(SoundChooseActivity.this,"LOCKED", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    //暂时没有动画
+                    ImLeft.setImageResource(sgc[ImMidID-1].id);
+                    ImMid.setImageResource(sgc[ImMidID].id);
+                    ImRight.setImageResource(sgc[ImMidID+1].id);
+                    //System.out.println(ImMidID);
+                    String atext;
+                    atext=sgc[ImMidID].name;
+                    if(sgc[ImMidID].isavailable){
+                        atext=atext;
+                        TextCondition.setTextColor(Color.BLACK);
+                    }else{
+                        atext=atext+"  LOCKED!";
+                        TextCondition.setTextColor(Color.RED);
+                    }
+                    TextCondition.setText(atext);
+                    TextCondition.setVisibility(View.VISIBLE);
+                    //更新曲包图案
+                    break;
+                }
+            }
+        }
+        return true;
+    };
 }
