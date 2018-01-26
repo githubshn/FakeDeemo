@@ -1,3 +1,5 @@
+//SoundName is needed to create
+
 package sdb.fakedeemo;
 
 import android.content.Intent;
@@ -47,19 +49,24 @@ public class PerformingActivity extends AppCompatActivity {
 
     private GameScore score=new GameScore();
     public float simglekeyscore;
+    private String SoundName;
 
     private int testnum=0;
 
     void Close(){
-        //if(mediaplayer!=null||mediaplayer.isPlaying()){
-        //    mediaplayer.release();
-        //    mediaplayer.reset();
-        //}
+        System.out.println("close");
+        if(mediaplayer.isPlaying()){
+            mediaplayer.stop();
+            System.out.println("stop");
+        }
         SoundOver=true;
-        //Bundle bundle=this.getIntent().getExtras();
-        //String SGName=bundle.getString("NAME");
-        //bundle.putString("NAME",SGName);
-        Intent intent = new Intent(PerformingActivity.this, StatisticsActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("FROM","Performing");
+        bundle.putString("WHERE","Statistics");
+        bundle.putString("SoundName",SoundName);
+        Intent intent = new Intent(PerformingActivity.this, LoadingActivity.class);
+        intent.putExtras(bundle);
         startActivity(intent);
         PerformingActivity.this.finish();
     }
@@ -82,7 +89,6 @@ public class PerformingActivity extends AppCompatActivity {
         //通知view组件重绘
         view.invalidate();
         rl.addView(view);
-        //System.out.println("canvas");
     }
 
     public int CalculateMouse(float x,float y){
@@ -97,7 +103,7 @@ public class PerformingActivity extends AppCompatActivity {
         int ex=BSTW;
         float hx=sx+(ex-sx)*a-width/2;
         int num=Math.round((x-hx)/width)+1;
-        TextMouse.setText(String.valueOf(num));
+        //TextMouse.setText(String.valueOf(num));
         return num;
     }
 
@@ -112,7 +118,7 @@ public class PerformingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         rl = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_main,null);
         setContentView(rl);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //强制横屏
 
         WindowManager manager = this.getWindowManager();
@@ -122,6 +128,10 @@ public class PerformingActivity extends AppCompatActivity {
         ScreenH = outMetrics.heightPixels;
         //获得屏幕长宽
 
+        Bundle bundle=this.getIntent().getExtras();
+        SoundName=bundle.getString("SoundName");
+        //获取歌曲名
+
         final Handler handler=new Handler() {
             @Override
             public void handleMessage(Message msg){
@@ -129,11 +139,10 @@ public class PerformingActivity extends AppCompatActivity {
                 if(msg.what!=-1) {
                     TextPosition.setText(String.valueOf(msg.what));
                     //RefreshSoundTrack
-                    while(nowKeyID<=keynum&&(key[nowKeyID].type!="Key"||key[nowKeyID].place*1000+sparetime1-preparetime<msg.what)){
-                        if(key[nowKeyID].type!="Key"){
+                    while(nowKeyID<=keynum&&((!key[nowKeyID].type.equals("Key")||key[nowKeyID].place*1000+sparetime1-preparetime<msg.what))){
+                        if(!key[nowKeyID].type.equals("Key")){
                             nowKeyID++;
                         }else{
-
                             if(key[nowKeyID].start!=0) {
                                 for (int i = key[nowKeyID].start; i <= key[nowKeyID].end; i++) {
                                     soundtrack[i].addkey(nowKeyID,key[nowKeyID]);
@@ -171,25 +180,24 @@ public class PerformingActivity extends AppCompatActivity {
                             }
                         }
                     }
+                    System.out.println(view.total);
                     view.invalidate();
                 }else {
-                    TextPosition.setText("Over");
+                    //TextPosition.setText("Over");
                     timer.cancel();
                 }
             }
         };
 
         timerTask=new TimerTask() {
-            int i=10;
             @Override
             public void run() {
                 Message message=Message.obtain();
-                if(mediaplayer!=null&&mediaplayer.isPlaying()) {
+                if(!SoundOver&&mediaplayer!=null&&mediaplayer.isPlaying()) {
                     message.what = mediaplayer.getCurrentPosition();
                 }else{
                     message.what = -1;
                     SoundOver=true;
-                    mediaplayer.release();
                 }
                 handler.sendMessage(message);
             }
@@ -205,6 +213,7 @@ public class PerformingActivity extends AppCompatActivity {
         ImStop.setImageResource(R.drawable.back2);
         ImStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
+
                 Close();
             }
         });
@@ -218,6 +227,7 @@ public class PerformingActivity extends AppCompatActivity {
         TextPosition.setWidth(300);
         TextPosition.setText("preparing");
 
+/*
         TextMouse=new TextView(this);
         rl.addView(TextMouse);
         TextMouse.setX(500);
@@ -225,6 +235,7 @@ public class PerformingActivity extends AppCompatActivity {
         TextMouse.setHeight(100);
         TextMouse.setWidth(300);
         TextMouse.setText("Mouse");
+*/
 
         TextScore=new TextView(this);
         rl.addView(TextScore);
@@ -235,12 +246,7 @@ public class PerformingActivity extends AppCompatActivity {
         TextScore.setTextSize(30);
         TextScore.setTextColor(Color.GRAY);
         TextScore.setText("0.00%");
-
-
-
-        Bundle bundle=this.getIntent().getExtras();
-        String SoundName=bundle.getString("NAME");
-        //获取歌曲名
+        //计分板
 
         //积分板块init
         score.score=0;
@@ -253,12 +259,9 @@ public class PerformingActivity extends AppCompatActivity {
         //积分板块init
 
         String filename="sound"+SoundName+"hard.txt";
-        //filename="142.txt";
-        //System.out.println(filename);
         Scanner filescanner=null;
         InputStream inputstream=null;
         AssetManager assetmanager=getAssets();
-
         try{
             inputstream=assetmanager.open(filename);
             filescanner=new Scanner (inputstream);
@@ -266,7 +269,6 @@ public class PerformingActivity extends AppCompatActivity {
             while(filescanner.hasNextLine()){
                 i++;
                 reader[i]=new String(filescanner.nextLine());
-                //System.out.println(reader[i]);
             }
             lenreader=i;
         }catch(Exception e){
@@ -278,7 +280,7 @@ public class PerformingActivity extends AppCompatActivity {
         for(i=1;i<=lenreader;i++){
             String regex="[\\[\\(\\<]";
             String[] stringkey=reader[i].split(regex);
-            int  cut=0;
+            int  cut=0;//cut用于计算多连音时间
             for(String a:stringkey){
                 //System.out.println("a="+a);
                 if(a.indexOf(')')!=-1){
@@ -301,8 +303,6 @@ public class PerformingActivity extends AppCompatActivity {
                             key[keynum].type="Speed";
                             key[keynum].data=Integer.parseInt(a.substring(place+1,a.indexOf('>')));
                             speed=key[keynum].data;
-                            //System.out.println(key[keynum].data);
-                            //System.out.println(key[keynum].type);
                             break;
                         case "Length":
                             keynum++;
@@ -312,8 +312,6 @@ public class PerformingActivity extends AppCompatActivity {
                             key[keynum].type="Length";
                             key[keynum].data=Integer.parseInt(a.substring(place+1,a.indexOf('>')));
                             length=key[keynum].data;
-                            //System.out.println(key[keynum].data);
-                            //System.out.println(key[keynum].type);
                             break;
                         default:
                             break;
@@ -326,7 +324,6 @@ public class PerformingActivity extends AppCompatActivity {
                         String aa = a.substring(place1 + 1);
                         int laa = aa.length()-1;
                         int iaa = 0;
-                        //System.out.println(aa);
                         while (iaa<=laa){
                             switch (aa.charAt(iaa)){
                                 case '-':
@@ -347,8 +344,6 @@ public class PerformingActivity extends AppCompatActivity {
                                 default:
                                     break;
                             }
-                            //System.out.println(aa.charAt(iaa));
-                            //System.out.println(atime);
                             iaa++;
                         }
                     }
@@ -360,10 +355,8 @@ public class PerformingActivity extends AppCompatActivity {
                     }
                     float aatime;
                     if(tt!=0)aatime=key[tt].place+key[tt].time*60/key[tt].speed;else aatime=0;
-                    //System.out.println(aatime);
                     //计算时长
                     a=a.substring(0,place1);
-                    //System.out.println(a);
                     while(a!=""){
                         int place2=a.indexOf(',');
                         String aa;
@@ -385,8 +378,6 @@ public class PerformingActivity extends AppCompatActivity {
 
                             score.totKey++;//统计出现的键的个数
 
-                            //System.out.println(key[keynum].place);
-                            //System.out.println(key[keynum].type);
                         }else if(aa.length()==2){
                             keynum++;
                             key[keynum]=new Key();
@@ -400,8 +391,6 @@ public class PerformingActivity extends AppCompatActivity {
 
                             score.totKey++;//统计出现的键的个数
 
-                            //System.out.println(key[keynum].place);
-                            //System.out.println(key[keynum].type);
                         }
                         if(place2==-1){
                             a="";
@@ -418,16 +407,11 @@ public class PerformingActivity extends AppCompatActivity {
 
         simglekeyscore=ComboScore(score.totKey)/3*7/score.totKey;
         score.totScore=score.totKey*simglekeyscore+ComboScore(score.totKey);//计算总分（未归一化）
-        //System.out.println("Score");
-        //System.out.println(simglekeyscore);
-        //System.out.println(score.totScore);
-        //System.out.println("Score");
 
         mediaplayer=new MediaPlayer();
         mediaplayer.reset();
         String musicname;
         musicname="music"+SoundName+".mp3";
-        //musicname="test.mp3";
 
         try {
             AssetFileDescriptor fileDescriptor = getAssets().openFd(musicname);
@@ -437,13 +421,9 @@ public class PerformingActivity extends AppCompatActivity {
             //???
             System.out.println("Fail to get resource");
         }
-
-        //if(mediaplayer==null)System.out.println("null");else System.out.println("start");
-        //System.out.println(mediaplayer.getDuration());
-
         //歌曲准备结束
-        testnum=0;
 
+        testnum=0;
 
         SoundOver=false;
         mediaplayer.start();
@@ -456,10 +436,6 @@ public class PerformingActivity extends AppCompatActivity {
         timer=new Timer();
         timer.schedule(timerTask,0,refresh);
         //Timer
-        //if(!mediaplayer.isPlaying()){
-        //    Close();
-        //}
-
     }
 
 
@@ -468,23 +444,16 @@ public class PerformingActivity extends AppCompatActivity {
             delKey delkey = new delKey();
             float x1, x2, y1, y2, x3, y3;
             int STonClick;
-            int pointnum = event.getPointerCount();
-            //System.out.println(pointnum);
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
                     x1 = event.getX();
                     y1 = event.getY();
                     STonClick = CalculateMouse(x1, y1);
-                    if(y1<=ScreenH/2)STonClick=0;
-                    //TextScore.setText("Down");
-
+                    if(y1<=ScreenH/2)STonClick=0;//不接受上半屏的触碰
 
                     if (STonClick >= 1 && STonClick <= 35) {
                         delkey = soundtrack[STonClick].judge(mediaplayer.getCurrentPosition(), preparetime, sparetime1, 'B');
                         if (delkey.score > 0) {
-                            //System.out.println("id");
-                            //System.out.println(delkey.id);
-                            //System.out.println(String.valueOf(STonClick));
                             testnum++;
                             for (int i = delkey.start; i <= delkey.end; i++) {
                                 soundtrack[i].del(delkey.id);
@@ -495,13 +464,8 @@ public class PerformingActivity extends AppCompatActivity {
                             int as=(int)(score.score/score.totScore*10000);
                             float ass=as/100;
                             TextScore.setText(String.valueOf(ass)+"%");
-                            //System.out.println("Combo");
-                            //System.out.println(score.Combo);
-                            //System.out.println(score.score);
-                            //System.out.println("Combo");
                         }
                     }
-
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
@@ -524,5 +488,4 @@ public class PerformingActivity extends AppCompatActivity {
         }
         return true;
     };
-
 }

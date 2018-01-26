@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         rl = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_main,null);
         setContentView(rl);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //强制横屏
 
         WindowManager manager = this.getWindowManager();
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent=new Intent(MainActivity.this,SoundChooseActivity.class);
                 startActivity(intent);
-                MainActivity.this.finish();
+                //MainActivity.this.finish();
             }
         });
     }

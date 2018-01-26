@@ -1,3 +1,6 @@
+//选区歌曲界面
+//SGName is needed to create
+
 package sdb.fakedeemo;
 
 import android.content.Intent;
@@ -26,7 +29,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         rl = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_main,null);
         setContentView(rl);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //强制横屏
 
         WindowManager manager = this.getWindowManager();
@@ -35,6 +38,11 @@ public class SoundChoose2Activity extends AppCompatActivity {
         ScreenW = outMetrics.widthPixels;
         ScreenH = outMetrics.heightPixels;
         //获得屏幕长宽
+
+        Bundle bundle=this.getIntent().getExtras();
+        String SGName=bundle.getString("SoundGroupName");
+        System.out.println(SGName);
+        //获取曲包名
 
         ImBack=new ImageView(this);
         rl.addView(ImBack);
@@ -53,15 +61,10 @@ public class SoundChoose2Activity extends AppCompatActivity {
         });
         //Back 按钮
 
-        Bundle bundle=this.getIntent().getExtras();
-        String SGName=bundle.getString("NAME");
-        //获取曲包名
-
         String filename="sg"+SGName+"catalogue.txt";
         Scanner filescanner=null;
         InputStream inputstream=null;
         AssetManager assetmanager=getAssets();
-
         try{
             inputstream=assetmanager.open(filename);
             filescanner=new Scanner (inputstream);
@@ -71,12 +74,8 @@ public class SoundChoose2Activity extends AppCompatActivity {
                 sound[i] = new SoundCondition();
                 //name    pic   completeness   isavailable    isFC   isAC
                 sound[i].name = filescanner.nextLine();
-                //System.out.println(sound[i].name);
                 sound[i].pic = filescanner.nextLine();
-                //System.out.println(sound[i].pic);
                 sound[i].id=getResources().getIdentifier(sound[i].pic,"drawable","sdb.fakedeemo");
-                //System.out.println(sound[i].id);
-                //System.out.println(R.drawable.soundred1);
                 sound[i].completeness=new Scanner(filescanner.nextLine()).nextFloat();
                 sound[i].isavailable = new Scanner(filescanner.nextLine()).nextBoolean();
                 sound[i].isFC = new Scanner(filescanner.nextLine()).nextBoolean();
@@ -86,6 +85,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
             //what to do? i do not know!
             System.out.println(e.getStackTrace());
         }
+
 
         final int ImSound=1;
         int ImSoundPicH=ScreenH*5/7;
@@ -100,13 +100,16 @@ public class SoundChoose2Activity extends AppCompatActivity {
         //ImSoundPic.setImageResource(R.drawable.soundred1);
         ImSoundPic.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                Bundle bundle=new Bundle();
-                bundle.putString("NAME",sound[ImSound].name);
-                Intent intent=new Intent(SoundChoose2Activity.this,PerformingActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("SoundName", sound[ImSound].name);
+                bundle.putString("FROM","SoundChoose2");
+                bundle.putString("WHERE","Performing");
+                Intent intent = new Intent(SoundChoose2Activity.this, LoadingActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 SoundChoose2Activity.this.finish();
             }
         });
+
     }
 }

@@ -1,3 +1,4 @@
+//nothing special is needed to create
 package sdb.fakedeemo;
 
 import android.content.Intent;
@@ -22,7 +23,7 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         rl = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_main,null);
         setContentView(rl);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //强制横屏
 
         WindowManager manager = this.getWindowManager();
@@ -52,7 +53,11 @@ public class StatisticsActivity extends AppCompatActivity {
         Im.setImageResource(R.drawable.test);
         Im.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                Intent intent=new Intent(StatisticsActivity.this,MainActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("FROM","Statistics");
+                bundle.putString("WHERE","SoundChoose2");
+                Intent intent = new Intent(StatisticsActivity.this, LoadingActivity.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 StatisticsActivity.this.finish();
             }

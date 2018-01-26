@@ -1,4 +1,5 @@
 //选取曲包
+//Nothing special is needed to create
 
 package sdb.fakedeemo;
 
@@ -43,7 +44,7 @@ public class SoundChooseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         rl = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_main,null);
         setContentView(rl);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //强制横屏
 
         WindowManager manager = this.getWindowManager();
@@ -172,24 +173,6 @@ public class SoundChooseActivity extends AppCompatActivity {
             }
         });
         ImMidID=1;
-
-/*
-        ImMid.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(sgc[ImMidID].isavailable) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("NAME", sgc[ImMidID].name);
-                    Intent intent = new Intent(SoundChooseActivity.this, SoundChoose2Activity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                    SoundChooseActivity.this.finish();
-                }else{
-                    System.out.println("LOCKED");
-                }
-            }
-        });
-        */
-
     }
 
     public boolean onTouchEvent(android.view.MotionEvent event) {
@@ -199,8 +182,8 @@ public class SoundChooseActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_DOWN: {
                     x1 = event.getX();
                     y1 = event.getY();
-                    System.out.println("x1");
-                    System.out.println(x1);
+                    //System.out.println("x1");
+                    //System.out.println(x1);
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
@@ -211,10 +194,10 @@ public class SoundChooseActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_UP: {
                     x3 = event.getX();
                     y3 = event.getY();
-                    System.out.println("x3");
-                    System.out.println(x3);
-                    System.out.println("*x1");
-                    System.out.println(x1);
+                    //System.out.println("x3");
+                    //System.out.println(x3);
+                    //System.out.println("*x1");
+                    //System.out.println(x1);
                     if(y1>=ScreenH/5&&y1<=ScreenH/5+ScreenH*2/3){
                         if(x3-x1<0&&Math.abs(x3-x1)>=100){
                             if(ImMidID<sgnum){
@@ -228,8 +211,10 @@ public class SoundChooseActivity extends AppCompatActivity {
                         }else if((x1>=ScreenW/2-ScreenH/3&&x1<=ScreenW/2+ScreenH/3)&&(Math.abs(x3-x1)<=100)&&(Math.abs(y1-y3)<=100)){
                             if(sgc[ImMidID].isavailable) {
                                 Bundle bundle = new Bundle();
-                                bundle.putString("NAME", sgc[ImMidID].name);
-                                Intent intent = new Intent(SoundChooseActivity.this, SoundChoose2Activity.class);
+                                bundle.putString("SoundGroupName", sgc[ImMidID].name);
+                                bundle.putString("FROM","SoundChoose");
+                                bundle.putString("WHERE","SoundChoose2");
+                                Intent intent = new Intent(SoundChooseActivity.this, LoadingActivity.class);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
                                 SoundChooseActivity.this.finish();
