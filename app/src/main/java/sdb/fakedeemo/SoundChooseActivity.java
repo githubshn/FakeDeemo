@@ -176,7 +176,6 @@ public class SoundChooseActivity extends AppCompatActivity {
     }
 
     public boolean onTouchEvent(android.view.MotionEvent event) {
-        delKey delkey = new delKey();
         if (soundchoose) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
