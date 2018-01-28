@@ -1,6 +1,12 @@
-1
+2
 *
 soundfirst
+0
+true
+false
+false
+test
+test
 0
 true
 false

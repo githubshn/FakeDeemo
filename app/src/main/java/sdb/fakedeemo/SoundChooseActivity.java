@@ -210,7 +210,7 @@ public class SoundChooseActivity extends AppCompatActivity {
                         }else if((x1>=ScreenW/2-ScreenH/3&&x1<=ScreenW/2+ScreenH/3)&&(Math.abs(x3-x1)<=100)&&(Math.abs(y1-y3)<=100)){
                             if(sgc[ImMidID].isavailable) {
                                 Bundle bundle = new Bundle();
-                                bundle.putString("SoundGroupName", sgc[ImMidID].name);
+                                bundle.putString("SGName", sgc[ImMidID].name);
                                 bundle.putString("FROM","SoundChoose");
                                 bundle.putString("WHERE","SoundChoose2");
                                 Intent intent = new Intent(SoundChooseActivity.this, LoadingActivity.class);

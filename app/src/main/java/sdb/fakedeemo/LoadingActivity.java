@@ -57,8 +57,7 @@ public class LoadingActivity extends AppCompatActivity {
 
 
             LoadBundle = new Bundle();
-            LoadBundle.putString("SoundGroupName", bundle.getString("SoundGroupName"));
-            System.out.println(bundle.getString("SoundGroupName"));
+            LoadBundle.putString("SGName", bundle.getString("SGName"));
             intent = new Intent(LoadingActivity.this, SoundChoose2Activity.class);
 
 
@@ -67,6 +66,8 @@ public class LoadingActivity extends AppCompatActivity {
 
             LoadBundle = new Bundle();
             LoadBundle.putString("SoundName", bundle.getString("SoundName"));
+            LoadBundle.putString("SGName", bundle.getString("SGName"));
+            System.out.println(bundle.getString("SGName"));
             intent = new Intent(LoadingActivity.this, PerformingActivity.class);
 
 
@@ -75,6 +76,14 @@ public class LoadingActivity extends AppCompatActivity {
 
             LoadBundle = new Bundle();
             LoadBundle.putString("SoundName", bundle.getString("SoundName"));
+            LoadBundle.putString("SGName",bundle.getString("SGName"));
+            System.out.println(bundle.getString("SGName"));
+            LoadBundle.putInt("Perfect",bundle.getInt("Perfect"));
+            LoadBundle.putInt("Excellent",bundle.getInt("Excellent"));
+            LoadBundle.putInt("Good",bundle.getInt("Good"));
+            LoadBundle.putInt("Total",bundle.getInt("Total"));
+            LoadBundle.putInt("MaxCombo",bundle.getInt("MaxCombo"));
+            LoadBundle.putFloat("Score",bundle.getFloat("Score"));
             intent = new Intent(LoadingActivity.this, StatisticsActivity.class);
 
 
@@ -82,8 +91,9 @@ public class LoadingActivity extends AppCompatActivity {
 
 
             LoadBundle = new Bundle();
-            LoadBundle.putString("SoundName", bundle.getString("SoundName"));
-            intent = new Intent(LoadingActivity.this, MainActivity.class);
+            LoadBundle.putString("SGName", bundle.getString("SGName"));
+            System.out.println(bundle.getString("SGName"));
+            intent = new Intent(LoadingActivity.this, SoundChoose2Activity.class);
 
 
         }

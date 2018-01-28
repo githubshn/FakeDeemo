@@ -31,6 +31,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
     private int SoundNum,ImMidID;
     private float x1=0,x2=0,x3=0,y1=0,y2=0,y3=0;
     private TextView TextCondition;
+    private String SGName;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
         //获得屏幕长宽
 
         Bundle bundle=this.getIntent().getExtras();
-        String SGName=bundle.getString("SoundGroupName");
+        SGName=bundle.getString("SGName");
         System.out.println(SGName);
         //获取曲包名
 
@@ -187,6 +188,7 @@ public class SoundChoose2Activity extends AppCompatActivity {
                         if(sound[ImMidID].isavailable) {
                             Bundle bundle = new Bundle();
                             bundle.putString("SoundName", sound[ImMidID].name);
+                            bundle.putString("SGName", SGName);
                             bundle.putString("FROM","SoundChoose2");
                             bundle.putString("WHERE","Performing");
                             Intent intent = new Intent(SoundChoose2Activity.this, LoadingActivity.class);

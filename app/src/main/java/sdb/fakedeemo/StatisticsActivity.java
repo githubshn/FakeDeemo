@@ -18,6 +18,10 @@ public class StatisticsActivity extends AppCompatActivity {
     private int ScreenH,ScreenW;
     ImageView Im;
     TextView Text;
+    String SGName,SoundName;
+    int MaxCombo,TotalKey,Perfect,Excellent,Good;
+    float Score;
+    int ShowScore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,15 +37,37 @@ public class StatisticsActivity extends AppCompatActivity {
         ScreenH = outMetrics.heightPixels;
         //获得屏幕长宽
 
+        Bundle bundle=this.getIntent().getExtras();
+        SGName=bundle.getString("SGName");
+        SoundName=bundle.getString("SoundName");
+        Perfect=bundle.getInt("Perfect");
+        Excellent=bundle.getInt("Excellent");
+        Good=bundle.getInt("Good");
+        TotalKey=bundle.getInt("Total");
+        MaxCombo=bundle.getInt("MaxCombo");
+        Score=bundle.getFloat("Score");
+
+        ShowScore=(int)(Score*10000);
+        Score=ShowScore/100;
+
         Text=new TextView(this);
         rl.addView(Text);
         Text.setX(ScreenW/2);
-        Text.setY(0);
-        Text.setHeight(100);
+        Text.setY(ScreenH/3);
+        Text.setHeight(1000);
         Text.setWidth(3000);
         Text.setTextSize(30);
         Text.setTextColor(Color.GRAY);
-        Text.setText("Have not been completed!");
+
+        String stext;
+        stext="Score: "+String.valueOf(Score)+"%\n"+"Perfect:"+String.valueOf(Perfect);
+        stext=stext+"\n"+"Excellent:"+String.valueOf(Excellent);
+        stext=stext+"\n"+"Good:"+String.valueOf(Good);
+        stext=stext+"\n"+"Total:"+String.valueOf(TotalKey);
+        stext=stext+"\n"+"MaxCombo:"+String.valueOf(MaxCombo);
+
+
+        Text.setText(stext);
 
         Im=new ImageView(this);
         rl.addView(Im);
@@ -56,6 +82,8 @@ public class StatisticsActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("FROM","Statistics");
                 bundle.putString("WHERE","SoundChoose2");
+                bundle.putString("SoundName", SoundName);
+                bundle.putString("SGName",SGName);
                 Intent intent = new Intent(StatisticsActivity.this, LoadingActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

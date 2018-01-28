@@ -42,22 +42,22 @@ public class SoundTrack {
         //System.out.println(a);
         switch (type){
             case 'B':
-                if(-10<=a&&a<=10){
+                if(-5<=a&&a<=15){
                     re.score=1;
                     re.start=queueKey[t].start;
                     re.end=queueKey[t].end;
                     re.id=queue[t];
-                }else if((a>=-20&&a<-10)||(a>10&&a<=25)){
+                }else if((a>=-15&&a<-5)||(a>15&&a<=30)){
                     re.score=2;
                     re.start=queueKey[t].start;
                     re.end=queueKey[t].end;
                     re.id=queue[t];
-                }else if(a>25&&a<=50){
+                }else if(a>30&&a<=50){
                     re.score=3;
                     re.start=queueKey[t].start;
                     re.end=queueKey[t].end;
                     re.id=queue[t];
-                }else if(a<-20){
+                }else if(a<-15){
                     re.score=-1;
                     re.start=queueKey[t].start;
                     re.end=queueKey[t].end;

@@ -1,4 +1,4 @@
-//SoundName is needed to create
+//SoundName,SGName are needed to create
 
 package sdb.fakedeemo;
 
@@ -37,7 +37,7 @@ public class PerformingActivity extends AppCompatActivity {
     private MediaPlayer mediaplayer;
     private Boolean SoundOver=false;
     private ImageView ImStop;
-    private TextView TextPosition,TextMouse,TextScore;
+    private TextView TextPosition,TextMouse,TextScore,TextCombo;
     private Timer timer;
     private TimerTask timerTask;
     final int refresh=40;//大约24分之一秒
@@ -50,6 +50,8 @@ public class PerformingActivity extends AppCompatActivity {
     private GameScore score=new GameScore();
     public float simglekeyscore;
     private String SoundName;
+    private String SGName;
+    private int MaxCombo=0;
 
     private int testnum=0;
 
@@ -65,6 +67,13 @@ public class PerformingActivity extends AppCompatActivity {
         bundle.putString("FROM","Performing");
         bundle.putString("WHERE","Statistics");
         bundle.putString("SoundName",SoundName);
+        bundle.putString("SGName",SGName);
+        bundle.putInt("Perfect",score.Judge[1]);
+        bundle.putInt("Excellent",score.Judge[2]);
+        bundle.putInt("Good",score.Judge[3]);
+        bundle.putInt("Total",score.totKey);
+        bundle.putInt("MaxCombo",MaxCombo);
+        bundle.putFloat("Score",score.score/score.totScore);
         Intent intent = new Intent(PerformingActivity.this, LoadingActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -75,6 +84,25 @@ public class PerformingActivity extends AppCompatActivity {
         if(combo<0) return 0;
         float re=(float)combo;
         return re*re;
+    }
+
+    float simglekey(int x){
+        float re=0;
+        switch (x){
+            case 1:
+                re=1;
+                break;
+            case 2:
+                re=0.85f;
+                break;
+            case 3:
+                re=0.6f;
+                break;
+            default:
+                re=0;
+                break;
+        }
+        return re;
     }
 
     private void init() {
@@ -130,6 +158,7 @@ public class PerformingActivity extends AppCompatActivity {
 
         Bundle bundle=this.getIntent().getExtras();
         SoundName=bundle.getString("SoundName");
+        SGName=bundle.getString("SGName");
         //获取歌曲名
 
         final Handler handler=new Handler() {
@@ -169,6 +198,7 @@ public class PerformingActivity extends AppCompatActivity {
                                         soundtrack[i].del(soundtrack[i].queue[j]);
                                     }
                                     score.Combo=0;
+                                    TextCombo.setText(String.valueOf(score.Combo)+" Combo");
                                     //琴键自然死亡，Combo重置
                                 }else {
                                     view.total++;
@@ -247,6 +277,17 @@ public class PerformingActivity extends AppCompatActivity {
         TextScore.setTextColor(Color.GRAY);
         TextScore.setText("0.00%");
         //计分板
+
+        TextCombo=new TextView(this);
+        rl.addView(TextCombo);
+        TextCombo.setX(ScreenW*8/10);
+        TextCombo.setY(ScreenH/2);
+        TextCombo.setHeight(100);
+        TextCombo.setWidth(300);
+        TextCombo.setTextSize(30);
+        TextCombo.setTextColor(Color.GRAY);
+        TextCombo.setText("Combo");
+        TextCombo.setVisibility(View.INVISIBLE);
 
         //积分板块init
         score.score=0;
@@ -423,6 +464,7 @@ public class PerformingActivity extends AppCompatActivity {
         }
         //歌曲准备结束
 
+        TextCombo.setVisibility(View.VISIBLE);
         testnum=0;
 
         SoundOver=false;
@@ -459,11 +501,13 @@ public class PerformingActivity extends AppCompatActivity {
                                 soundtrack[i].del(delkey.id);
                             }
                             score.Combo++;
+                            if(score.Combo>MaxCombo)MaxCombo=score.Combo;
                             score.Judge[delkey.score]++;
-                            score.score=score.score+simglekeyscore+ComboScore(score.Combo)-ComboScore(score.Combo-1);//计算分数
+                            score.score=score.score+simglekeyscore*simglekey(delkey.score)+ComboScore(score.Combo)-ComboScore(score.Combo-1);//计算分数
                             int as=(int)(score.score/score.totScore*10000);
                             float ass=as/100;
                             TextScore.setText(String.valueOf(ass)+"%");
+                            TextCombo.setText(String.valueOf(score.Combo)+" Combo");
                         }
                     }
                     break;
